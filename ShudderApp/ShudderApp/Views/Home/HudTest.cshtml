@@ -85,6 +85,15 @@
         div#hudCoordInfo, div#hudOrientInfo, div#targetinfo, .helptext {
             text-shadow: 0em 0em 0.1em #8F7;
             background-color: transparent;
+        }
+
+        div#targetinfo {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+        }
+
+        div#hudCoordInfo, div#hudOrientInfo, .helptext {
             position:relative;
         }
 
@@ -167,22 +176,22 @@
 
                 <div class="compass" style="height: 60%">
                     <div id="rose" class="compass__rose" style="background-color: transparent;">
-                        <svg class="compass__rose__dial" viewBox="0 0 130 130" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="65" cy="65" r="56" stroke="white" stroke-width="1" fill="none" />
-                            <polyline points="63,9  67,9  65,13" fill="white" />
-                            <polyline points="121,63  121,67  119,65" fill="white" />
-                            <polyline points="63,121  67,121  65,119" fill="white" />
-                            <polyline points="9,63  9,67  11,65" fill="white" />
-                            <text x="65" y="4.2" font-size="5" text-anchor="middle" fill="white">N</text>
-                            <text x="127" y="67" font-size="5" text-anchor="middle" fill="white">E</text>
-                            <text x="65" y="129" font-size="5" text-anchor="middle" fill="white">S</text>
-                            <text x="2.8" y="67" font-size="5" text-anchor="middle" fill="white">W</text>
+                        <svg class="compass__pointer" viewBox="0 0 130 130" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                            <polyline points="60,60  70,60  65,15" fill="#b60000" />
+                            <polyline points="60,70  70,70  65,115" fill="white" />
+                            <circle cx="65" cy="65" r="7" stroke="#b60000" stroke-width="7" fill="none" />
                         </svg>
                     </div>
-                    <svg class="compass__pointer" viewBox="0 0 130 130" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                        <polyline points="60,60  70,60  65,15" fill="#b60000" />
-                        <polyline points="60,70  70,70  65,115" fill="white" />
-                        <circle cx="65" cy="65" r="7" stroke="#b60000" stroke-width="7" fill="none" />
+                    <svg class="compass__rose__dial" viewBox="0 0 130 130" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="65" cy="65" r="56" stroke="white" stroke-width="1" fill="none" />
+                        <polyline points="63,9  67,9  65,13" fill="white" />
+                        <polyline points="121,63  121,67  119,65" fill="white" />
+                        <polyline points="63,121  67,121  65,119" fill="white" />
+                        <polyline points="9,63  9,67  11,65" fill="white" />
+                        <text x="65" y="4.2" font-size="5" text-anchor="middle" fill="white">N</text>
+                        <text x="127" y="67" font-size="5" text-anchor="middle" fill="white">E</text>
+                        <text x="65" y="129" font-size="5" text-anchor="middle" fill="white">S</text>
+                        <text x="2.8" y="67" font-size="5" text-anchor="middle" fill="white">W</text>
                     </svg>
                 </div>
 
@@ -433,6 +442,7 @@
                 targetText += 'ID: ' + theTarget.id + ', Distance: ' + theTarget.position.distance + ', Bearing: ' + theTarget.position.bearing + ', Lat/Long :' + theTarget.position.latitude + '/' + theTarget.position.longitude + ', Obst: ' + theTarget.position.totalObstructions + '<br />';
             }
             $('#targetinfo').html(targetText);
+            DrawMap();
         }
 
     </script>
@@ -516,7 +526,11 @@
 
 
         map.addLayer(osm);
-        function locationUpdate(position) {
+        function locationUpdate(position) {            
+            DrawMap();
+        }
+
+        function DrawMap() {
             if (typeof (markerLayer) !== "undefined") {
                 map.removeLayer(markerLayer);
             }
@@ -541,10 +555,10 @@
                 markerColor: 'red'
             });
 
-            for (i in window.targetdata.targets) {
-                var value = window.targetdata.targets[i];
+            for (i in window.targets) {
+                var value = window.targets[i];
 
-                lastPosition = value.positions[value.positions.length - 1];
+                lastPosition = value.position;
 
                 if (typeof (lastPosition) === "undefined") {
                     break;
@@ -563,8 +577,7 @@
             map.addLayer(markerLayer);
             map.addLayer(markerlayer1);
             map.addLayer(markerlayer2);
-
-        }
+}
 
         function locationUpdateFail(error) {
             console.log("location fail: ", error);
