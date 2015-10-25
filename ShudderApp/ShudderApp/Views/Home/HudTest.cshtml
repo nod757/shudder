@@ -9,7 +9,7 @@
     <title>Quick Test</title>
     <style>
         body {
-            background-color:rgba(0,0,0,.2)
+           
         }
         #viewbox {
             overflow: hidden;
@@ -29,6 +29,7 @@
             top: 0px;
             width: 100%;
             height: 100%;
+             background-color:rgba(0,0,0,.9)
         }
 
         #sphere-box {
@@ -62,7 +63,7 @@
         }
 
             #heads-up-display > div {
-                background-color: rgba(255,0,0,.3);
+                background-color: rgba(255,0,0,0);
                 width: 33%;
                 height: 20%;
             }
@@ -81,7 +82,7 @@
             background-color: transparent;
         }
 
-        div#hudCoordInfo, div#hudOrientInfo, div#targetinfo {
+        div#hudCoordInfo, div#hudOrientInfo, div#targetinfo, .helptext {
             text-shadow: 0em 0em 0.1em #8F7;
             background-color: transparent;
             position:relative;
@@ -161,11 +162,10 @@
             <div id="hud-top-left">
                 <div id="hudCoordInfo"></div>
                 <div id="hudOrientInfo"></div>
-                <button onclick="getNewPositions()">Get New Positions</button>
             </div>
             <div id="hud-top-center">
 
-                <div class="compass" style="height: 100%">
+                <div class="compass" style="height: 60%">
                     <div id="rose" class="compass__rose" style="background-color: transparent;">
                         <svg class="compass__rose__dial" viewBox="0 0 130 130" version="1.1" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="65" cy="65" r="56" stroke="white" stroke-width="1" fill="none" />
@@ -189,7 +189,7 @@
                 <div class='status' style="background-color: transparent;">
                     <div id='debug-orientation-default'></div>
                     <div id='debug-orientation'></div>
-                    <div class='position row' style="background-color: rgba(255,0,0,.3);">
+                    <div class='position row' style="background-color: rgba(255,0,0,.3); display: none;">
                         <div class='column-33'>
                             <div class='label'>HDG</div>
                             <div id='position-hng'>n/a</div>
@@ -255,29 +255,9 @@
                     </div>
                 </div>
 
-                <div id="popup" class="popup">
-                    <div id="popup-content" class="popup__content">
-                        <div id="popup-contents" class="popup__contents">
-                            <div id="popup-inner-info" class="popup__inner popup__inner--hide">
-                                <p>
-                                    For best results calibrate the accelerometer in your device by tracing out a figure of 8 in the air several times vertically and horizontally. The heading can also be affected by nearby magnetic fields.
-                                </p>
-                                <p>
-                                    For more information, bugs or comments please visit <a href='https://github.com/lamplightdev/compass'>the repo on github</a>.
-                                </p>
-                            </div>
-                            d<div id="popup-inner-noorientation" class="popup__inner popup__inner--hide">
-                                <p>
-                                    Unfortunately this browser doesn't support orientation so will not show your correct heading.
-                                </p>
-                            </div>
-                        </div>
-                        <button id="popup-close" class="popup__close" href='#'>close</button>
-                    </div>
-                </div>
             </div>
             <div id="hud-top-right">
-                <span style="color:red;">Top Right</span>
+                <span style="color:red;"></span>
                 <div id="map"></div>
             </div>
             <div id="hud-center-center"><div class="crosshair">+</div><span style="color:red;"></span></div>
@@ -285,9 +265,9 @@
                 <div id="targetinfo"></div>
             </div>
             <div id="hud-bottom-center">
-                <span style="color:red;">Bottom Center</span>
+                <span style="color:red;"></span>
             </div>
-            <div id="hud-bottom-right"><span style="color:red;">Bottom Right</span><span id="fulltilt"></span><button onclick="getNewPositions()" style="position:absolute; bottom: 0px; right: 0px;">Get New Positions</button></div>
+            <div id="hud-bottom-right"><span id="fulltilt"></span><h4 class="helptext" onclick="getNewPositions()" style="position:absolute; bottom: 0px; right: 0px;">Get Next Positions >></h4></div>
             <div id="x" style="display: none;"></div>
         </div>
     </div>
@@ -384,7 +364,7 @@
         //}, false);
 
 
-
+        //this is a full Tilt implementation
         var fulltiltPromise = FULLTILT.getDeviceOrientation({ 'type': 'world' });
 
         // Wait for Promise result
@@ -398,7 +378,7 @@
                 var compassHeading = 360 - currentOrientation.alpha;
                 // Do something with `compassHeading` here...
                 hud.compassAngle = compassHeading;
-                document.getElementById('fulltilt').innerHTML = 'FullTilt: ' + hud.compassAngle;
+                //document.getElementById('fulltilt').innerHTML = 'FullTilt: ' + hud.compassAngle;
             });
         }).catch(function (errorMessage) { // Device Orientation Events are not supported
             console.log(errorMessage);
@@ -450,7 +430,7 @@
             targetText += 'Targets (' + window.targets.length + '): <br />';
             for (var i = 0; i < window.targets.length; i++) {
                 var theTarget = window.targets[i];
-                targetText += 'ID: ' + theTarget.id + ', Distance: ' + theTarget.position.distance + ', Bearing: ' + theTarget.position.bearing + ', Lat/Long :' + theTarget.position.latitude + '/' + theTarget.position.longitude + ' <br />';
+                targetText += 'ID: ' + theTarget.id + ', Distance: ' + theTarget.position.distance + ', Bearing: ' + theTarget.position.bearing + ', Lat/Long :' + theTarget.position.latitude + '/' + theTarget.position.longitude + ', Obst: ' + theTarget.position.totalObstructions + '<br />';
             }
             $('#targetinfo').html(targetText);
         }
@@ -513,7 +493,7 @@
             targetText += 'Targets (' + window.targets.length + '): <br />';
             for (var i = 0; i < window.targets.length; i++) {
                 var theTarget = window.targets[i];
-                targetText += 'ID: ' + theTarget.id + ', Distance: ' + theTarget.position.distance + ', Bearing: '+theTarget.position.bearing+', Lat/Long :'+theTarget.position.latitude+'/'+theTarget.position.longitude+' <br />';
+                targetText += 'ID: ' + theTarget.id + ', Distance: ' + theTarget.position.distance + ', Bearing: ' + theTarget.position.bearing + ', Lat/Long :' + theTarget.position.latitude + '/' + theTarget.position.longitude + ', Obst: ' + theTarget.position.totalObstructions + '<br />';
             }
             $('#targetinfo').html(targetText);
         }
