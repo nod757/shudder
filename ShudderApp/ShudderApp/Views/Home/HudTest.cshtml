@@ -8,6 +8,9 @@
     @Scripts.Render("~/bundles/jquery")
     <title>Quick Test</title>
     <style>
+        body {
+            background-color:rgba(0,0,0,.2)
+        }
         #viewbox {
             overflow: hidden;
             width: 100%;
@@ -64,10 +67,11 @@
                 height: 20%;
             }
 
-        #hud-top-left {
+        div#hud-top-left {
             position: absolute;
             top: 0px;
             left: 0px;
+            background-color:transparent;
         }
 
         div#hud-top-center {
@@ -75,6 +79,12 @@
             top: 0px;
             left: 33.3%;
             background-color: transparent;
+        }
+
+        div#hudCoordInfo, div#hudOrientInfo, div#targetinfo {
+            text-shadow: 0em 0em 0.1em #8F7;
+            background-color: transparent;
+            position:relative;
         }
 
         #hud-top-right {
@@ -110,11 +120,12 @@
                 background-color: transparent;
             }
 
-        #hud-bottom-left {
+        div#hud-bottom-left {
             position: absolute;
             height: 20%;
             bottom: 0px;
             left: 0px;
+            background-color:transparent;
         }
 
         #hud-bottom-center {
@@ -149,7 +160,7 @@
         <div id="heads-up-display">
             <div id="hud-top-left">
                 <div id="hudCoordInfo"></div>
-                <span style="color:red;">Top Left</span>
+                <div id="hudOrientInfo"></div>
                 <button onclick="getNewPositions()">Get New Positions</button>
             </div>
             <div id="hud-top-center">
@@ -284,9 +295,12 @@
     <script src="~/Scripts/AppScripts/hud-system.js"></script>
     <script src="~/Scripts/AppScripts/projection-system.js"></script>
     <script>
+        //Sim loading
         hud.latitude = 27.96128173377289;
         hud.longitude = -82.46397972106933;
         hud.altitude = 30;
+        //end sim loading
+
         //window.addEventListener("resize", hud.setViewBoxSize('sphere-box2'));
 
         //Alpha 0-180
@@ -431,6 +445,14 @@
 
         function getNewPositions() {
             positionData.GetLatestData();
+            $('#hudOrientInfo').html('Compass Degree: ' + hud.compassAngle + '<br />');
+            var targetText = '';
+            targetText += 'Targets (' + window.targets.length + '): <br />';
+            for (var i = 0; i < window.targets.length; i++) {
+                var theTarget = window.targets[i];
+                targetText += 'ID: ' + theTarget.id + ', Distance: ' + theTarget.position.distance + ', Bearing: ' + theTarget.position.bearing + ', Lat/Long :' + theTarget.position.latitude + '/' + theTarget.position.longitude + ' <br />';
+            }
+            $('#targetinfo').html(targetText);
         }
 
     </script>
@@ -458,7 +480,7 @@
             hud.latitude = 27.96128173377289;
             hud.longitude = -82.46397972106933;
             hud.altitude = 30;
-            $('#hudInfo').innerHTML = 'Lat: ' + hud.latitude + '<br />' + 'Long: ' + hud.longitude;
+            $('#hudCoordInfo').html('Lat: ' + hud.latitude + '<br />' + 'Long: ' + hud.longitude);
         }
         function showError(error) {
             switch (error.code) {
@@ -485,7 +507,15 @@
 
         function deviceOrientationListener(event) {
             //console.log('draw targets');
-            hud.drawTargets();
+            hud.drawTargets(); 
+            $('#hudOrientInfo').html('Compass Degree: ' + hud.compassAngle + '<br />');
+            var targetText = '';
+            targetText += 'Targets (' + window.targets.length + '): <br />';
+            for (var i = 0; i < window.targets.length; i++) {
+                var theTarget = window.targets[i];
+                targetText += 'ID: ' + theTarget.id + ', Distance: ' + theTarget.position.distance + ', Bearing: '+theTarget.position.bearing+', Lat/Long :'+theTarget.position.latitude+'/'+theTarget.position.longitude+' <br />';
+            }
+            $('#targetinfo').html(targetText);
         }
         
         
